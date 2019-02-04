@@ -6,19 +6,27 @@ from django.db.models.signals import m2m_changed, post_save, pre_delete, \
     pre_save
 from django.dispatch import receiver
 
+
 class CategoriaProduto(models.Model):
-    nome = models.CharField(max_length=50)
+    nome = models.CharField(max_length=50, unique=True, null=False, blank=False,
+                            error_messages={'unique': "Já existe uma categoria cadastrada com este nome"})
+    descricao = models.CharField(max_length=150, blank=True, null=True)
 
     def __str__(self):
         return self.nome
 
 
 class SubCategoriaProduto(models.Model):
-    categoria = models.ForeignKey(CategoriaProduto, on_delete=models.PROTECT)
-    nome = models.CharField(max_length=50)
+    categoria = models.ForeignKey(CategoriaProduto, on_delete=models.PROTECT, default=1)
+    nome = models.CharField(max_length=50, null=False, blank=False,)
+    descricao = models.CharField(max_length=150, blank=True, null=True)
+
+    class Meta:
+        unique_together = ('nome', 'categoria')
 
     def __str__(self):
         return self.categoria.nome + ' \ ' + self.nome
+
 
 class Medida(models.Model):
     descricao = models.CharField(max_length=50, unique=True,
@@ -27,12 +35,14 @@ class Medida(models.Model):
     def __str__(self):
         return self.descricao
 
+
 class Local(models.Model):
     descricao = models.CharField(max_length=50, unique=True,
                            null=False, blank=False)
 
     def __str__(self):
         return self.descricao
+
 
 class Produto(models.Model):
     codigo = models.CharField(max_length=30, unique=True,
@@ -117,6 +127,7 @@ def atualiza_estoque(sender, instance, **kwargs):
            
             
     produto.save()
+
 
 @receiver(pre_delete, sender=MovimentoEstoque)
 def remove_movimento(sender, instance, **kwargs):
