@@ -1,12 +1,10 @@
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
-from django.db import models
+from django.contrib.auth.models import User
+from django.db import models 
 from django.db.models.signals import m2m_changed, post_save, pre_delete, \
     pre_save
 from django.dispatch import receiver
-
-from locale import str
-
 
 class CategoriaProduto(models.Model):
     nome = models.CharField(max_length=50)
@@ -22,14 +20,29 @@ class SubCategoriaProduto(models.Model):
     def __str__(self):
         return self.categoria.nome + ' \ ' + self.nome
 
+class Medida(models.Model):
+    descricao = models.CharField(max_length=50, unique=True,
+                           null=False, blank=False) 
+
+    def __str__(self):
+        return self.descricao
+
+class Local(models.Model):
+    descricao = models.CharField(max_length=50, unique=True,
+                           null=False, blank=False)
+
+    def __str__(self):
+        return self.descricao
 
 class Produto(models.Model):
     codigo = models.CharField(max_length=30, unique=True,
                            null=False, blank=False)
     descricao = models.CharField(max_length=150)
     subcategoria = models.ForeignKey(SubCategoriaProduto, on_delete=models.PROTECT)
+    medida = models.ForeignKey(Medida, on_delete=models.PROTECT)
     minimo = models.IntegerField(validators=[MinValueValidator(0)], default=5)
     estoque = models.IntegerField(validators=[MinValueValidator(0)], default=0)
+    local = models.ForeignKey(Local, on_delete=models.PROTECT)
 
     def __str__(self): 
         return self.codigo + ' - ' + self.descricao
@@ -38,8 +51,6 @@ class Produto(models.Model):
 class MovimentoEstoque(models.Model):
     ENTRADA = 'en'
     SAIDA = 'sd'
-    CANCELAMENTO_ENTRADA = 'ce'
-    CANCELAMENTO_SAIDA = 'cs'
 
     TIPO_MOVIMENTO = (
         (ENTRADA, 'Entrada'),
@@ -52,6 +63,7 @@ class MovimentoEstoque(models.Model):
         choices=TIPO_MOVIMENTO, default=SAIDA, max_length=2)
     quantidade = models.IntegerField(default=0)
     observacao = models.TextField(null=True, blank=True)
+    usuario =  models.ForeignKey(User, on_delete=models.PROTECT)
 
     def clean(self):
         if self.quantidade > self.produto.estoque and self.tipo_movimento == 'sd':

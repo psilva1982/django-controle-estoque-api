@@ -3,6 +3,8 @@ from django.contrib import admin
 from estoque.models import MovimentoEstoque, Produto
 from estoque.models import CategoriaProduto
 from estoque.models import SubCategoriaProduto
+from estoque.models import Local
+from estoque.models import Medida
 
 class MovimentoEstoqueAdmin(admin.ModelAdmin):
     list_display = ['data', 'tipo_movimento', 'produto_descricao', 'quantidade']
@@ -28,3 +30,5 @@ admin.site.register(MovimentoEstoque, MovimentoEstoqueAdmin)
 admin.site.register(SubCategoriaProduto, SubCategoriaProdutoAdmin)
 admin.site.register(CategoriaProduto)
 admin.site.register(Produto, ProdutoAdmin)
+admin.site.register(Local)
+admin.site.register(Medida)
