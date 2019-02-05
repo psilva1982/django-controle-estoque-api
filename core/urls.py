@@ -14,9 +14,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, re_path, include
+from django.urls import path, include
 from rest_framework import routers
-from rest_framework.routers import DefaultRouter 
 from seguranca.token import TokenView
 
 from rest_framework_simplejwt.views import (
@@ -28,12 +27,16 @@ from estoque.api.viewsets import CategoriaViewSet
 from estoque.api.viewsets import SubCategoriaViewSet
 from estoque.api.viewsets import ProdutoViewSet
 from estoque.api.viewsets import MovimentoEstoqueViewSet
+from estoque.api.viewsets import LocalViewSet
+from estoque.api.viewsets import MedidaViewSet
 
 router = routers.DefaultRouter()
 router.register(r'categorias',  CategoriaViewSet) 
 router.register(r'subcategorias', SubCategoriaViewSet)
 router.register(r'produtos', ProdutoViewSet)
 router.register(r'movimento', MovimentoEstoqueViewSet)
+router.register(r'locais', LocalViewSet)
+router.register(r'medidas', MedidaViewSet)
 
 
 urlpatterns = [

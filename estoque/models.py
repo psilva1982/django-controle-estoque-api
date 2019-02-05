@@ -8,7 +8,7 @@ from django.dispatch import receiver
 
 
 class CategoriaProduto(models.Model):
-    nome = models.CharField(max_length=50, unique=True, null=False, blank=False,
+    nome = models.CharField(max_length=50, unique=True,
                             error_messages={'unique': "Já existe uma categoria cadastrada com este nome"})
     descricao = models.CharField(max_length=150, blank=True, null=True)
 
@@ -17,7 +17,7 @@ class CategoriaProduto(models.Model):
 
 
 class SubCategoriaProduto(models.Model):
-    categoria = models.ForeignKey(CategoriaProduto, on_delete=models.PROTECT, default=1)
+    categoria = models.ForeignKey(CategoriaProduto, on_delete=models.PROTECT)
     nome = models.CharField(max_length=50, null=False, blank=False,)
     descricao = models.CharField(max_length=150, blank=True, null=True)
 
@@ -26,6 +26,8 @@ class SubCategoriaProduto(models.Model):
 
     def __str__(self):
         return self.categoria.nome + ' \ ' + self.nome
+
+
 
 
 class Medida(models.Model):
