@@ -48,7 +48,7 @@ class ProdutoViewSet(viewsets.ModelViewSet):
     queryset = Produto.objects.all()
     filter_backends = (SearchFilter, DjangoFilterBackend,)
     filter_fields = ('local', 'subcategoria', 'medida')
-    search_fields = ('nome', 'codigo', 'descricao',)
+    search_fields = ('codigo', 'descricao',)
 
 
 class MovimentoEstoqueViewSet(viewsets.ModelViewSet):
