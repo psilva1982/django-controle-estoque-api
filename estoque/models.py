@@ -28,8 +28,6 @@ class SubCategoriaProduto(models.Model):
         return self.categoria.nome + ' \ ' + self.nome
 
 
-
-
 class Medida(models.Model):
     descricao = models.CharField(max_length=50, unique=True,
                            null=False, blank=False) 
@@ -47,22 +45,25 @@ class Local(models.Model):
 
 
 class Produto(models.Model):
-    codigo = models.CharField(max_length=30, unique=True,
-                           null=False, blank=False)
-    descricao = models.CharField(max_length=150)
+    codigo = models.CharField(max_length=30, unique=True, null=False, blank=False,
+                              error_messages={'unique': "Já existe um produto cadastrado com este código"})
+    descricao = models.CharField(max_length=150, null=False, blank=False)
     subcategoria = models.ForeignKey(SubCategoriaProduto, on_delete=models.PROTECT)
     medida = models.ForeignKey(Medida, on_delete=models.PROTECT)
     minimo = models.IntegerField(validators=[MinValueValidator(0)], default=5)
     estoque = models.IntegerField(validators=[MinValueValidator(0)], default=0)
     local = models.ForeignKey(Local, on_delete=models.PROTECT)
 
+    class Meta:
+        unique_together = ('descricao', 'subcategoria', 'local')
+
     def __str__(self): 
         return self.codigo + ' - ' + self.descricao
 
 
 class MovimentoEstoque(models.Model):
-    ENTRADA = 'en'
-    SAIDA = 'sd'
+    ENTRADA = 'entrada'
+    SAIDA = 'saida'
 
     TIPO_MOVIMENTO = (
         (ENTRADA, 'Entrada'),
@@ -71,14 +72,14 @@ class MovimentoEstoque(models.Model):
 
     data = models.DateField(auto_created=True)
     produto = models.ForeignKey(Produto, on_delete=models.PROTECT)
-    tipo_movimento = models.CharField(
-        choices=TIPO_MOVIMENTO, default=SAIDA, max_length=2)
+    tipo_movimento = models.CharField(choices=TIPO_MOVIMENTO, default=SAIDA, max_length=7)
+    motivo = models.CharField(max_length=150, null=True, blank=True)
     quantidade = models.IntegerField(default=0)
     observacao = models.TextField(null=True, blank=True)
-    usuario =  models.ForeignKey(User, on_delete=models.PROTECT)
+    usuario = models.ForeignKey(User, on_delete=models.PROTECT)
 
     def clean(self):
-        if self.quantidade > self.produto.estoque and self.tipo_movimento == 'sd':
+        if self.quantidade > self.produto.estoque and self.tipo_movimento == 'saida':
             raise ValidationError('Existe(m) apenas {} unidade(s) no estoque do produto {}' .format(
                 self.produto.estoque, self.produto))
 
@@ -89,55 +90,3 @@ class MovimentoEstoque(models.Model):
         verbose_name = 'Movimento do estoque'
         verbose_name_plural = 'Movimento do estoque'
 
-@receiver(pre_save, sender=MovimentoEstoque)
-def atualiza_estoque(sender, instance, **kwargs):
-    
-    movimento = MovimentoEstoque.objects.filter(id=instance.id) 
-    produto = instance.produto
-
-    # Se o movimento não existe
-    if len(movimento) == 0: 
-
-        if instance.tipo_movimento == 'en' : 
-            produto.estoque += instance.quantidade
-
-        else :
-            produto.estoque -= instance.quantidade
-    
-    else:
-        quantidade_atual = movimento[0].quantidade
-        
-        if instance.tipo_movimento == 'en' :
-            if quantidade_atual < instance.quantidade:
-
-                diferenca = instance.quantidade - quantidade_atual
-                produto.estoque += diferenca   
-            
-            else:
-                diferenca = quantidade_atual - instance.quantidade
-                produto.estoque -= diferenca   
-
-        else:
-            if quantidade_atual < instance.quantidade:
-
-                diferenca = instance.quantidade - quantidade_atual
-                produto.estoque -= diferenca   
-            
-            else:
-                diferenca = quantidade_atual - instance.quantidade
-                produto.estoque += diferenca            
-           
-            
-    produto.save()
-
-
-@receiver(pre_delete, sender=MovimentoEstoque)
-def remove_movimento(sender, instance, **kwargs):
-    produto = instance.produto 
-    if instance.tipo_movimento == 'en' :
-        produto.estoque -= instance.quantidade
-    
-    else:
-        produto.estoque += instance.quantidade
-    
-    produto.save()

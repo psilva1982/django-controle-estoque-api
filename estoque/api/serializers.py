@@ -76,6 +76,58 @@ class ProdutoSerializer(serializers.ModelSerializer):
         model = Produto
         fields = '__all__'
 
+    def create(self, validated_data):
+
+        subcategoria_id = self.context['request'].data['subcategoria']
+        medida_id = self.context['request'].data['medida']
+        local_id = self.context['request'].data['local']
+
+        codigo = validated_data['codigo']
+        descricao = validated_data['descricao']
+        minimo = validated_data['minimo']
+
+        subcategoria = SubCategoriaProduto.objects.get(pk=subcategoria_id)
+        medida = Medida.objects.get(pk=medida_id)
+        local = Local.objects.get(pk=local_id)
+
+        produto = Produto.objects.create(
+            codigo=codigo,
+            descricao=descricao,
+            subcategoria=subcategoria,
+            medida=medida,
+            minimo=minimo,
+            local=local
+        )
+
+        produto.save()
+        return produto
+
+    def update(self, instance, validated_data):
+
+        subcategoria_id = self.context['request'].data['subcategoria']
+        medida_id = self.context['request'].data['medida']
+        local_id = self.context['request'].data['local']
+
+        codigo = validated_data['codigo']
+        descricao = validated_data['descricao']
+        minimo = validated_data['minimo']
+
+        subcategoria = SubCategoriaProduto.objects.get(pk=subcategoria_id)
+        medida = Medida.objects.get(pk=medida_id)
+        local = Local.objects.get(pk=local_id)
+
+        produto = instance
+
+        produto.codigo = codigo
+        produto.descricao = descricao
+        produto.subcategoria = subcategoria
+        produto.medida = medida
+        produto.minimo = minimo
+        produto.local = local
+
+        produto.save()
+        return produto
+
 
 class MovimentoEstoqueSerializer(serializers.ModelSerializer):
     class Meta:
