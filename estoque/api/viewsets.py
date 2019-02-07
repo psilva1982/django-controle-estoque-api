@@ -1,22 +1,20 @@
-from rest_framework.filters import SearchFilter
-from rest_framework import viewsets
-from rest_framework.permissions import DjangoModelPermissions
-from rest_framework_simplejwt.authentication import JWTAuthentication
+
+from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
-
-from estoque.api.serializers import CategoriaProdutoSerializer
-from estoque.api.serializers import SubCategoriaProdutoSerializer
-from estoque.api.serializers import ProdutoSerializer
-from estoque.api.serializers import MovimentoEstoqueSerializer
-from estoque.api.serializers import LocalSerializer
-from estoque.api.serializers import MedidaSerializer
-
-from estoque.models import CategoriaProduto
-from estoque.models import SubCategoriaProduto
-from estoque.models import Produto
-from estoque.models import Local
-from estoque.models import Medida
-from estoque.models import MovimentoEstoque
+from estoque.api.serializers import (CategoriaProdutoSerializer,
+                                     LocalSerializer,
+                                     MedidaSerializer,
+                                     MovimentoEstoqueSerializer,
+                                     ProdutoSerializer,
+                                     SubCategoriaProdutoSerializer)
+from estoque.models import (CategoriaProduto, Local, Medida, MovimentoEstoque,
+                            Produto, SubCategoriaProduto)
+from rest_framework import viewsets
+from rest_framework.filters import SearchFilter
+from rest_framework import serializers
+from rest_framework.permissions import DjangoModelPermissions
+from rest_framework.response import Response
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 class CategoriaViewSet(viewsets.ModelViewSet):
@@ -50,11 +48,23 @@ class ProdutoViewSet(viewsets.ModelViewSet):
     filter_fields = ('local', 'subcategoria', 'medida')
     search_fields = ('codigo', 'descricao',)
 
+    @action(methods=['get'], detail=False)
+    def estatistica(self, request):
+        produtos = Produto.objects.count()
+        
+        retorno = {
+            "total": produtos,
+            "total2": produtos,
+        } 
+
+        return Response(retorno)
+
 
 class MovimentoEstoqueViewSet(viewsets.ModelViewSet):
-    queryset = MovimentoEstoque.objects.all()
+
     serializer_class = MovimentoEstoqueSerializer
-    filter_fields = ('data', 'produto', 'tipo_movimento')
+    queryset = MovimentoEstoque.objects.all()
+    filter_backends = (SearchFilter, DjangoFilterBackend,)
 
 
 class LocalViewSet(viewsets.ModelViewSet):
@@ -67,4 +77,3 @@ class MedidaViewSet(viewsets.ModelViewSet):
 
     serializer_class = MedidaSerializer
     queryset = Medida.objects.all()
-

@@ -133,4 +133,3 @@ class MovimentoEstoqueSerializer(serializers.ModelSerializer):
     class Meta:
         model = MovimentoEstoque
         fields = '__all__'
-
