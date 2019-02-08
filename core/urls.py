@@ -29,6 +29,7 @@ from estoque.api.viewsets import ProdutoViewSet
 from estoque.api.viewsets import MovimentoEstoqueViewSet
 from estoque.api.viewsets import LocalViewSet
 from estoque.api.viewsets import MedidaViewSet
+from estoque.api.viewsets import DashBoardView
 
 router = routers.DefaultRouter()
 router.register(r'categorias',  CategoriaViewSet) 
@@ -41,7 +42,8 @@ router.register(r'medidas', MedidaViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    
+    path(r'dashboard', DashBoardView.as_view()),
+
     path('api/token/', TokenView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),

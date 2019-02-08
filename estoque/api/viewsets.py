@@ -11,7 +11,7 @@ from estoque.models import (CategoriaProduto, Local, Medida, MovimentoEstoque,
                             Produto, SubCategoriaProduto)
 from rest_framework import viewsets
 from rest_framework.filters import SearchFilter
-from rest_framework import serializers
+from rest_framework.views import APIView
 from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -41,6 +41,9 @@ class SubCategoriaViewSet(viewsets.ModelViewSet):
 
 
 class ProdutoViewSet(viewsets.ModelViewSet):
+
+    authentication_classes = (JWTAuthentication, )
+    permission_classes = (DjangoModelPermissions,)
 
     serializer_class = ProdutoSerializer
     queryset = Produto.objects.all()
@@ -77,3 +80,23 @@ class MedidaViewSet(viewsets.ModelViewSet):
 
     serializer_class = MedidaSerializer
     queryset = Medida.objects.all()
+
+class DashBoardView(APIView):
+
+    authentication_classes = (JWTAuthentication, )
+    permission_classes = (DjangoModelPermissions,)
+
+    def get(self, request, format=None):
+        produtos = Produto.objects.count()
+        sem_estoque = Produto.objects.filter(estoque__exact=0).count()
+        maior_estoque = Produto.objects.order_by('-estoque')[0]
+
+        print(maior_estoque)
+
+        retorno = {
+            "produtos": produtos,
+            "sem_estoque": sem_estoque,
+            "maior_estoque": maior_estoque.descricao
+        }
+
+        return Response(retorno)
