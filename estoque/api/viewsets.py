@@ -1,3 +1,5 @@
+from django.db.models import Q
+from django.db.models import Sum
 
 from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
@@ -87,16 +89,27 @@ class DashBoardView(APIView):
     permission_classes = (DjangoModelPermissions,)
 
     def get(self, request, format=None):
+
         produtos = Produto.objects.count()
         sem_estoque = Produto.objects.filter(estoque__exact=0).count()
         maior_estoque = Produto.objects.order_by('-estoque')[0]
+        categorias_produtos = {}
 
-        print(maior_estoque)
+        categorias = CategoriaProduto.objects.all()
+
+        # Cálculo da quantidade em estoque de produtos por categoria
+        for categoria in categorias:
+            produtosCategoria = Produto.objects.filter(subcategoria__categoria__id=categoria.id).aggregate(Sum('estoque'))
+
+            if(produtosCategoria.get('estoque__sum')):
+                categorias_produtos.update({categoria.nome: produtosCategoria.get('estoque__sum')})
+
 
         retorno = {
-            "produtos": produtos,
+            "total_produtos": produtos,
             "sem_estoque": sem_estoque,
-            "maior_estoque": maior_estoque.descricao
+            "maior_estoque": '{} - {}' .format(maior_estoque.codigo, maior_estoque.descricao),
+            "produtos_categorias": categorias_produtos
         }
 
         return Response(retorno)
