@@ -35,7 +35,7 @@ router = routers.DefaultRouter()
 router.register(r'categorias',  CategoriaViewSet) 
 router.register(r'subcategorias', SubCategoriaViewSet)
 router.register(r'produtos', ProdutoViewSet)
-router.register(r'movimento', MovimentoEstoqueViewSet)
+router.register(r'movimentos', MovimentoEstoqueViewSet)
 router.register(r'locais', LocalViewSet)
 router.register(r'medidas', MedidaViewSet)
 

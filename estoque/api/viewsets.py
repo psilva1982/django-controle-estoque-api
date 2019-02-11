@@ -54,16 +54,11 @@ class ProdutoViewSet(viewsets.ModelViewSet):
     filter_fields = ('local', 'subcategoria', 'medida')
     search_fields = ('codigo', 'descricao',)
 
-    @action(methods=['get'], detail=False)
-    def estatistica(self, request):
-        produtos = Produto.objects.count()
-        
-        retorno = {
-            "total": produtos,
-            "total2": produtos,
-        } 
+    @action(methods=['get'], detail=True)
+    def estoque(self, request, pk=None):
+        produto = self.get_object()
 
-        return Response(retorno)
+        return Response(produto.estoque)
 
 
 class MovimentoEstoqueViewSet(viewsets.ModelViewSet):
@@ -71,6 +66,7 @@ class MovimentoEstoqueViewSet(viewsets.ModelViewSet):
     serializer_class = MovimentoEstoqueSerializer
     queryset = MovimentoEstoque.objects.all()
     filter_backends = (SearchFilter, DjangoFilterBackend,)
+    filter_fields = ('produto', 'tipo_movimento', 'data')
 
 
 class LocalViewSet(viewsets.ModelViewSet):

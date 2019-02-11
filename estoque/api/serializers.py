@@ -1,3 +1,5 @@
+from django.contrib.auth.models import User
+
 from estoque.models import (CategoriaProduto, MovimentoEstoque, Produto,
                             SubCategoriaProduto, Medida, Local)
 from rest_framework import serializers
@@ -129,7 +131,46 @@ class ProdutoSerializer(serializers.ModelSerializer):
         return produto
 
 
+class UsuarioSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = '__all__'
+
+
 class MovimentoEstoqueSerializer(serializers.ModelSerializer):
+
+    produto = ProdutoSerializer(read_only="yes")
+    usuario = UsuarioSerializer(read_only="yes")
+
     class Meta:
         model = MovimentoEstoque
         fields = '__all__'
+
+    def create(self, validated_data):
+
+        produto_id = self.context['request'].data['produto'].get('id')
+        usuario_id = self.context['request'].data['usuario']
+
+        data = validated_data['data']
+        tipo = validated_data['tipo_movimento']
+        motivo = validated_data.get('motivo', '')
+        quantidade = validated_data['quantidade']
+        observacao = validated_data.get('observacao', '')
+
+        produto = Produto.objects.get(pk=produto_id)
+        usuario = User.objects.get(pk=usuario_id)
+
+        movimento = MovimentoEstoque.objects.create(
+            data=data,
+            produto=produto,
+            tipo_movimento=tipo,
+            motivo=motivo,
+            quantidade=quantidade,
+            observacao=observacao,
+            usuario=usuario
+        )
+
+        movimento.save()
+        return movimento
+
