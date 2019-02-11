@@ -149,7 +149,7 @@ class MovimentoEstoqueSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
 
-        produto_id = self.context['request'].data['produto'].get('id')
+        produto_id = self.context['request'].data['produto']
         usuario_id = self.context['request'].data['usuario']
 
         data = validated_data['data']
