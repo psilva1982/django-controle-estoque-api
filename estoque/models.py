@@ -2,9 +2,6 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User
 from django.db import models 
-from django.db.models.signals import m2m_changed, post_save, pre_delete, \
-    pre_save
-from django.dispatch import receiver
 
 
 class CategoriaProduto(models.Model):
