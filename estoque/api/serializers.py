@@ -171,6 +171,14 @@ class MovimentoEstoqueSerializer(serializers.ModelSerializer):
             usuario=usuario
         )
 
+        if tipo == 'entrada':
+            produto.estoque += quantidade
+            produto.save()
+
+        elif tipo == 'saida':
+            produto.estoque -= quantidade
+            produto.save()
+
         movimento.save()
         return movimento
 
