@@ -80,6 +80,7 @@ class MedidaViewSet(viewsets.ModelViewSet):
     serializer_class = MedidaSerializer
     queryset = Medida.objects.all()
 
+
 class DashBoardView(APIView):
 
     authentication_classes = (JWTAuthentication, )

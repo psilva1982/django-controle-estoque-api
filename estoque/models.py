@@ -75,6 +75,7 @@ class MovimentoEstoque(models.Model):
     tipo_movimento = models.CharField(choices=TIPO_MOVIMENTO, default=SAIDA, max_length=7)
     motivo = models.CharField(max_length=150, null=True, blank=True)
     quantidade = models.IntegerField(default=0)
+    saldo_anterior = models.IntegerField(default=0, null=False, blank=False)
     observacao = models.TextField(null=True, blank=True)
     usuario = models.ForeignKey(User, on_delete=models.PROTECT)
 

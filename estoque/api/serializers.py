@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from estoque.models import (CategoriaProduto, MovimentoEstoque, Produto,
                             SubCategoriaProduto, Medida, Local)
 from rest_framework import serializers
+from rest_framework.fields import SerializerMethodField
 
 
 class CategoriaProdutoSerializer(serializers.ModelSerializer):
@@ -135,17 +136,26 @@ class UsuarioSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ('id', 'username', 'first_name', 'last_name', 'email')
 
 
 class MovimentoEstoqueSerializer(serializers.ModelSerializer):
 
     produto = ProdutoSerializer(read_only="yes")
     usuario = UsuarioSerializer(read_only="yes")
+    saldo = SerializerMethodField()
 
     class Meta:
         model = MovimentoEstoque
         fields = '__all__'
+
+    def get_saldo(self, obj):
+
+        if obj.tipo_movimento == 'entrada':
+            return obj.saldo_anterior + obj.quantidade
+
+        elif obj.tipo_movimento == 'saida':
+            return obj.saldo_anterior - obj.quantidade
 
     def create(self, validated_data):
 
@@ -161,12 +171,16 @@ class MovimentoEstoqueSerializer(serializers.ModelSerializer):
         produto = Produto.objects.get(pk=produto_id)
         usuario = User.objects.get(pk=usuario_id)
 
+        if quantidade > produto.estoque and tipo == 'saida':
+            raise serializers.ValidationError('A quantidade informada é superior ao estoque')
+
         movimento = MovimentoEstoque.objects.create(
             data=data,
             produto=produto,
             tipo_movimento=tipo,
             motivo=motivo,
             quantidade=quantidade,
+            saldo_anterior=produto.estoque,
             observacao=observacao,
             usuario=usuario
         )
