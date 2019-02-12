@@ -68,6 +68,11 @@ class MovimentoEstoqueViewSet(viewsets.ModelViewSet):
     filter_backends = (SearchFilter, DjangoFilterBackend,)
     filter_fields = ('produto', 'tipo_movimento', 'data')
 
+    # TODO - Excluir movimento e atualizar estoque
+    #def destroy(self, request, *args, **kwargs):
+    #   user = request.user # deleting user
+    #   # you custom logic #
+    #   return super(YourViewSetClass, self).destroy(request, *args, **kwargs)
 
 class LocalViewSet(viewsets.ModelViewSet):
 
