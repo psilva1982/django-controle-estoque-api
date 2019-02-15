@@ -5,7 +5,7 @@ import datetime
 
 from rest_framework.decorators import action
 from rest_framework import viewsets
-from rest_framework.filters import SearchFilter
+from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.views import APIView
 from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.response import Response
@@ -45,9 +45,11 @@ class SubCategoriaViewSet(viewsets.ModelViewSet):
 
     serializer_class = SubCategoriaProdutoSerializer
     queryset = SubCategoriaProduto.objects.all()
-    filter_backends = (SearchFilter, DjangoFilterBackend,)
+    filter_backends = (SearchFilter, DjangoFilterBackend, OrderingFilter)
     filter_fields = ('categoria',)
     search_fields = ('nome',)
+    ordering_fields = ('categoria__nome', 'nome' )
+    ordering = ('categoria__nome',)
 
 
 class ProdutoViewSet(viewsets.ModelViewSet):
@@ -57,9 +59,11 @@ class ProdutoViewSet(viewsets.ModelViewSet):
 
     serializer_class = ProdutoSerializer
     queryset = Produto.objects.all()
-    filter_backends = (SearchFilter, DjangoFilterBackend,)
+    filter_backends = (SearchFilter, DjangoFilterBackend, OrderingFilter)
     filter_fields = ('local', 'subcategoria', 'medida')
     search_fields = ('codigo', 'descricao',)
+    ordering_fields = ('subcategoria__nome', 'codigo',)
+    ordering = ('subcategoria__nome',)
 
     @action(methods=['get'], detail=True)
     def estoque(self, request, pk=None):
@@ -72,8 +76,10 @@ class MovimentoEstoqueViewSet(viewsets.ModelViewSet):
 
     serializer_class = MovimentoEstoqueSerializer
     queryset = MovimentoEstoque.objects.all()
-    filter_backends = (SearchFilter, DjangoFilterBackend,)
+    filter_backends = (SearchFilter, DjangoFilterBackend, OrderingFilter)
     filter_fields = ('produto', 'tipo_movimento', 'data')
+    ordering_fields = ('data',)
+    ordering = ('-data',)
 
     def destroy(self, request, *args, **kwargs):
 
