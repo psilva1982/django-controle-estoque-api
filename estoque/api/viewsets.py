@@ -1,14 +1,12 @@
-from django.db.models import Q
 from django.db.models import Sum
-from django.db.models import F
 
 import datetime
 
-from rest_framework.decorators import action
 from rest_framework import viewsets
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.views import APIView
 from rest_framework.permissions import DjangoModelPermissions
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django_filters.rest_framework import DjangoFilterBackend
@@ -28,6 +26,7 @@ from estoque.api.serializers import SubCategoriaProdutoSerializer
 from estoque.api.serializers import CategoriaProdutoSerializer
 
 from estoque.api.filters import ProdutoFilter
+
 
 class CategoriaViewSet(viewsets.ModelViewSet):
 
@@ -56,8 +55,8 @@ class SubCategoriaViewSet(viewsets.ModelViewSet):
 
 class ProdutoViewSet(viewsets.ModelViewSet):
 
-    # authentication_classes = (JWTAuthentication, )
-    # permission_classes = (DjangoModelPermissions,)
+    authentication_classes = (JWTAuthentication, )
+    permission_classes = (DjangoModelPermissions,)
 
     serializer_class = ProdutoSerializer
     queryset = Produto.objects.all()
@@ -70,6 +69,9 @@ class ProdutoViewSet(viewsets.ModelViewSet):
 
 
 class MovimentoEstoqueViewSet(viewsets.ModelViewSet):
+
+    authentication_classes = (JWTAuthentication, )
+    permission_classes = (DjangoModelPermissions,)
 
     serializer_class=MovimentoEstoqueSerializer
     queryset=MovimentoEstoque.objects.all()
@@ -108,8 +110,8 @@ class MedidaViewSet(viewsets.ModelViewSet):
 
 class DashBoardView(APIView):
 
-    # authentication_classes = (JWTAuthentication, )
-    # permission_classes = (IsAuthenticated,)
+    authentication_classes = (JWTAuthentication, )
+    permission_classes = (IsAuthenticated,)
 
     def get(self, request, format=None):
 
