@@ -1,7 +1,9 @@
+from builtins import property
+
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
-from django.contrib.auth.models import User
-from django.db import models 
+from django.db import models
 
 
 class CategoriaProduto(models.Model):
@@ -27,7 +29,7 @@ class SubCategoriaProduto(models.Model):
 
 class Medida(models.Model):
     descricao = models.CharField(max_length=50, unique=True,
-                           null=False, blank=False) 
+                                 null=False, blank=False)
 
     def __str__(self):
         return self.descricao
@@ -35,7 +37,7 @@ class Medida(models.Model):
 
 class Local(models.Model):
     descricao = models.CharField(max_length=50, unique=True,
-                           null=False, blank=False)
+                                 null=False, blank=False)
 
     def __str__(self):
         return self.descricao
@@ -45,7 +47,8 @@ class Produto(models.Model):
     codigo = models.CharField(max_length=30, unique=True, null=False, blank=False,
                               error_messages={'unique': "Já existe um produto cadastrado com este código"})
     descricao = models.CharField(max_length=150, null=False, blank=False)
-    subcategoria = models.ForeignKey(SubCategoriaProduto, on_delete=models.PROTECT)
+    subcategoria = models.ForeignKey(
+        SubCategoriaProduto, on_delete=models.PROTECT)
     medida = models.ForeignKey(Medida, on_delete=models.PROTECT)
     minimo = models.IntegerField(validators=[MinValueValidator(0)], default=5)
     estoque = models.IntegerField(validators=[MinValueValidator(0)], default=0)
@@ -54,9 +57,19 @@ class Produto(models.Model):
     class Meta:
         unique_together = ('descricao', 'subcategoria', 'local')
 
-    def __str__(self): 
+    def __str__(self):
         return self.codigo + ' - ' + self.descricao
 
+    @property
+    def status(self):
+        if self.estoque == 0: 
+            return 'Sem estoque'
+        
+        elif self.estoque > 0 and self.estoque <= self.minimo: 
+            return 'Estoque baixo'
+        
+        else: 
+            return 'Estoque normal'
 
 class MovimentoEstoque(models.Model):
     ENTRADA = 'entrada'
@@ -69,7 +82,8 @@ class MovimentoEstoque(models.Model):
 
     data = models.DateField(auto_created=True)
     produto = models.ForeignKey(Produto, on_delete=models.PROTECT)
-    tipo_movimento = models.CharField(choices=TIPO_MOVIMENTO, default=SAIDA, max_length=7)
+    tipo_movimento = models.CharField(
+        choices=TIPO_MOVIMENTO, default=SAIDA, max_length=7)
     motivo = models.CharField(max_length=150, null=True, blank=True)
     quantidade = models.IntegerField(default=0)
     saldo_anterior = models.IntegerField(default=0, null=False, blank=False)
@@ -87,4 +101,3 @@ class MovimentoEstoque(models.Model):
     class Meta:
         verbose_name = 'Movimento do estoque'
         verbose_name_plural = 'Movimento do estoque'
-
