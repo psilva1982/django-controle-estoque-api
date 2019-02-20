@@ -42,6 +42,9 @@ class Local(models.Model):
     def __str__(self):
         return self.descricao
 
+    class Meta:
+        verbose_name_plural = 'Locais'
+
 
 class Produto(models.Model):
     codigo = models.CharField(max_length=30, unique=True, null=False, blank=False,
@@ -70,6 +73,7 @@ class Produto(models.Model):
         
         else: 
             return 'Estoque normal'
+
 
 class MovimentoEstoque(models.Model):
     ENTRADA = 'entrada'
