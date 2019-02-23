@@ -69,10 +69,10 @@ class Produto(models.Model):
             return 'Sem estoque'
         
         elif self.estoque > 0 and self.estoque <= self.minimo: 
-            return 'Estoque baixo'
+            return 'Baixo'
         
         else: 
-            return 'Estoque normal'
+            return 'Normal'
 
 
 class MovimentoEstoque(models.Model):
