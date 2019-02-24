@@ -25,6 +25,8 @@ from estoque.api.serializers import ProdutoSerializer
 from estoque.api.serializers import SubCategoriaProdutoSerializer
 from estoque.api.serializers import CategoriaProdutoSerializer
 
+from estoque.api.pagination import Pagination
+
 from estoque.api.filters import ProdutoFilter
 
 
@@ -41,16 +43,19 @@ class CategoriaViewSet(viewsets.ModelViewSet):
 
 class SubCategoriaViewSet(viewsets.ModelViewSet):
 
-    authentication_classes = (JWTAuthentication, )
-    permission_classes = (DjangoModelPermissions,)
+    #authentication_classes = (JWTAuthentication, )
+    #permission_classes = (DjangoModelPermissions,)
 
     serializer_class = SubCategoriaProdutoSerializer
+    pagination_class = Pagination
+
     queryset = SubCategoriaProduto.objects.all()
     filter_backends = (SearchFilter, DjangoFilterBackend, OrderingFilter)
     filter_fields = ('categoria',)
     search_fields = ('nome',)
     ordering_fields = ('categoria__nome', 'nome')
     ordering = ('categoria__nome',)
+
 
 
 class ProdutoViewSet(viewsets.ModelViewSet):
