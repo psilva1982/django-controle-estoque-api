@@ -1,6 +1,5 @@
 from django.db.models import F
 from django_filters import rest_framework as filters
-from rest_framework import generics
 
 from estoque.models import Produto
 

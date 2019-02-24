@@ -8,14 +8,14 @@
             size: a4 portrait;
             @frame header_frame {           /* Static Frame */
                 -pdf-frame-content: header_content;
-                left: 50pt; width: 512pt; top: 50pt; height: 40pt;
+                left: 45pt; width: 502pt; top: 50pt; height: 40pt;
             }
             @frame content_frame {          /* Content Frame */
-                left: 50pt; width: 512pt; top: 90pt; height: 632pt;
+                left: 45pt; width: 502pt; top: 90pt; height: 632pt;
             }
             @frame footer_frame {           /* Another static Frame */
                 -pdf-frame-content: footer_content;
-                left: 50pt; width: 512pt; top: 810pt; height: 20pt;
+                left: 45pt; width: 502pt; top: 800pt; height: 20pt;
             }
         }
 
@@ -70,7 +70,7 @@
                 {% for produto in produtos %}
                     <tr>
                         <td style="text-align: 'left'; width: 10%">{{ produto.codigo }}</td>
-                        <td style="text-align: 'left'; width: 45%">
+                        <td style="text-align: 'left'; width: 55%">
                             {{ produto.subcategoria.categoria.nome }} - {{ produto.descricao }}
                         </td>
                         <td style="text-align: 'left'; width: 15%">{{ produto.status }}</td>
