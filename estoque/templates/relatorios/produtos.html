@@ -52,7 +52,7 @@
     </div>
 
     <div id="footer_content">
-        <p style="text-align: center">Página <pdf:pagenumber> de <pdf:pagecount> - {{ hoje | date:"d/m/Y" }} </p>
+        <p style="text-align: center">Página <pdf:pagenumber> de <pdf:pagecount> </p>
     </div>
 
     <div id="content_frame">
@@ -97,6 +97,27 @@
                 {% endfor %}
             </tbody>
         </table>
+        <br/>
+        <div>
+            <h3> Parâmetros da pesquisa realizada em {{ hoje | date:"d/m/Y" }} </h3>
+            <ul>
+                <li>
+                    <span><b>Código / Produto: </b>{{ descricao }}</span> <br/>
+                </li>
+                <li>
+                    <span><b>Status do estoque: </b>{{ estoque }}</span>
+                </li>
+                <li>
+                    <span><b>Local: </b>{{ local }}</span>
+                </li>
+                <li>
+                    <span><b>Medida: </b>{{ medida }}</span>
+                </li>
+                <li>
+                    <span><b>Subcategoria: </b>{{ subcategoria }}</span>
+                </li>
+            </ul>
+        </div>
     </div>
 
 </body>

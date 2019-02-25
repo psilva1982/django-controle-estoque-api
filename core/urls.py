@@ -57,3 +57,4 @@ urlpatterns = [
 admin.site.site_header = 'Gestão de Estoque'
 admin.site.index_title = 'Administração'
 admin.site.site_title = 'Seja bem vindo'
+admin.site.site_url = 'http://localhost:4200/'
