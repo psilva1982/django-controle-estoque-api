@@ -5,17 +5,17 @@
     <title>Produtos</title>
     <style type="text/css">
         @page {
-            size: a4 portrait;
+            size: a4 landscape;
             @frame header_frame {           /* Static Frame */
                 -pdf-frame-content: header_content;
-                left: 45pt; width: 502pt; top: 50pt; height: 40pt;
+                left: 45pt; width: 770pt; top: 50pt; height: 40pt;
             }
             @frame content_frame {          /* Content Frame */
-                left: 45pt; width: 502pt; top: 90pt; height: 632pt;
+                left: 45pt; width: 770pt; top: 90pt; height: 420pt;
             }
             @frame footer_frame {           /* Another static Frame */
                 -pdf-frame-content: footer_content;
-                left: 45pt; width: 502pt; top: 800pt; height: 20pt;
+                left: 45pt; width: 770pt; top: 550pt; height: 20pt;
             }
         }
 
@@ -48,11 +48,11 @@
 <body>
 
     <div id="header_content">
-        <h1>Relatório de Produtos</h1>
+        <h1>Controle de Estoque - Relatório de Produtos</h1>
     </div>
 
-    <div id="footer_content" style="text-align: right;">
-        Página <pdf:pagenumber> de <pdf:pagecount> - {{ hoje | date:"d/m/Y" }}
+    <div id="footer_content">
+        <p style="text-align: center">Página <pdf:pagenumber> de <pdf:pagecount> - {{ hoje | date:"d/m/Y" }} </p>
     </div>
 
     <div id="content_frame">
@@ -61,6 +61,8 @@
                 <tr>
                     <th style="text-align: 'left';">CÓD.</th>
                     <th style="text-align: 'left';">PRODUTO</th>
+                    <th style="text-align: 'left';">CATEGORIA</th>
+                    <th style="text-align: 'left';">SUBCATEGORIA</th>
                     <th style="text-align: 'left';">ESTOQUE</th>
                     <th style="text-align: 'right';">QTDE.</th>
                     <th style="text-align: 'right';">LOCAL</th>
@@ -69,13 +71,28 @@
             <tbody>
                 {% for produto in produtos %}
                     <tr>
-                        <td style="text-align: 'left'; width: 10%">{{ produto.codigo }}</td>
-                        <td style="text-align: 'left'; width: 55%">
-                            {{ produto.subcategoria.categoria.nome }} - {{ produto.descricao }}
-                        </td>
-                        <td style="text-align: 'left'; width: 15%">{{ produto.status }}</td>
-                        <td style="text-align: 'right'; width: 10%">{{ produto.estoque }}</td>
-                        <td style="text-align: 'right'; width: 10%">{{ produto.local.descricao }}</td>
+                        <td style="text-align: 'left'; width: 8%">{{ produto.codigo }}</td>
+                        <td style="text-align: 'left'; width: 32%">{{ produto.descricao }}</td>
+                        <td style="text-align: 'left'; width: 17%">{{ produto.subcategoria.categoria.nome }}</td>
+                        <td style="text-align: 'left'; width: 17%">{{ produto.subcategoria.nome }}</td>
+
+                        {% if produto.status == 'Sem estoque' %}
+                            <td style="text-align: 'left'; width: 8%;">
+                                <span style="color:red">{{ produto.status }}</span>
+                            </td>
+
+                        {% elif produto.status == 'Baixo' %}
+                             <td style="text-align: 'left'; width: 8%;">
+                                <span style="color:orange">{{ produto.status }}</span>
+                            </td>
+
+                        {% else %}
+                            <td style="text-align: 'left'; width: 8%">{{ produto.status }}</td>
+
+                        {% endif %}
+
+                        <td style="text-align: 'right'; width: 8%">{{ produto.estoque }}</td>
+                        <td style="text-align: 'right'; width: 8%">{{ produto.local.descricao }}</td>
                     </tr>
                 {% endfor %}
             </tbody>

@@ -38,6 +38,8 @@ class RelatorioProdutos(View):
       if descricao:
          produtos = produtos.filter(codigo__icontains=descricao) | produtos.filter(descricao__icontains=descricao)
 
+      produtos = produtos.order_by('subcategoria__categoria__nome', 'subcategoria__nome', 'descricao')
+
       hoje = timezone.now()
       params = {
          'hoje': hoje,
