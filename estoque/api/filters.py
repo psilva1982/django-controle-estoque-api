@@ -2,6 +2,7 @@ from django.db.models import F
 from django_filters import rest_framework as filters
 
 from estoque.models import Produto
+from estoque.models import MovimentoEstoque
 
 
 class ProdutoFilter(filters.FilterSet):
@@ -24,3 +25,12 @@ class ProdutoFilter(filters.FilterSet):
         return queryset
 
 
+class MovimentoEstoqueFilter(filters.FilterSet):
+
+    class Meta:
+        model = MovimentoEstoque
+        fields = {
+            'produto': ['exact'],
+            'tipo_movimento': ['exact'],
+            'data': ['lte', 'gte'],
+        }

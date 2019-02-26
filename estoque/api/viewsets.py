@@ -29,6 +29,7 @@ from estoque.api.serializers import CategoriaProdutoSerializer
 from estoque.api.pagination import Pagination
 
 from estoque.api.filters import ProdutoFilter
+from estoque.api.filters import MovimentoEstoqueFilter
 
 
 class CategoriaViewSet(viewsets.ModelViewSet):
@@ -86,7 +87,7 @@ class MovimentoEstoqueViewSet(viewsets.ModelViewSet):
 
     queryset = MovimentoEstoque.objects.all()
     filter_backends = (SearchFilter, DjangoFilterBackend, OrderingFilter)
-    filter_fields = ('produto', 'tipo_movimento', 'data')
+    filterset_class = MovimentoEstoqueFilter
     ordering_fields = ('data',)
     ordering = ('-data',)
 

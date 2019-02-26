@@ -102,6 +102,15 @@ class MovimentoEstoque(models.Model):
     def __str__(self):
         return str(self.id)
 
+    @property
+    def saldo(self):
+
+        if self.tipo_movimento == 'entrada':
+            return self.saldo_anterior + self.quantidade
+
+        elif self.tipo_movimento == 'saida':
+            return self.saldo_anterior - self.quantidade
+
     class Meta:
         verbose_name = 'Movimento do estoque'
         verbose_name_plural = 'Movimento do estoque'

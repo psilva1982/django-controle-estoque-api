@@ -73,3 +73,43 @@ class RelatorioProdutos(View):
          parametro = recebe
 
       return parametro
+
+
+class RelatorioMovimentoEstoque(View):
+
+   def get(self, request):
+
+      produto = request.GET.get('produto' or None)
+      tipo_movimento = request.GET.get('tipo_movimento' or None)
+      data_inicio = request.GET.get('data__gte' or None)
+      data_fim = request.GET.get('data__lte' or None)
+
+      movimentos = MovimentoEstoque.objects.all()
+
+      if produto:
+         movimentos = movimentos.filter(produto=produto)
+         produto = Produto.objects.get(pk=produto)
+
+      if tipo_movimento:
+         movimentos = movimentos.filter(tipo_movimento=tipo_movimento)
+
+      if data_inicio:
+         movimentos = movimentos.filter(data__gte=date_inicio)
+
+      if data_fim:
+         movimentos = movimentos.filter(data__lte=data_fim)
+
+      movimentos = movimentos.order_by('-data')
+
+      hoje = timezone.now()
+
+      params = {
+         'hoje': hoje,
+         'movimentos': movimentos,
+         'produto': produto,
+         'tipo_movimento': tipo_movimento,
+         'data_inicio': data_inicio,
+         'data_fim': data_fim
+      }
+
+      return PdfRender.render('relatorios/movimento_estoque.html', params)

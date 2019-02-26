@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Movimento Estoque</title>
+    <style type="text/css">
+        @page {
+            size: a4 landscape;
+            @frame header_frame {           /* Static Frame */
+                -pdf-frame-content: header_content;
+                left: 45pt; width: 770pt; top: 50pt; height: 40pt;
+            }
+            @frame content_frame {          /* Content Frame */
+                left: 45pt; width: 770pt; top: 90pt; height: 420pt;
+            }
+            @frame footer_frame {           /* Another static Frame */
+                -pdf-frame-content: footer_content;
+                left: 45pt; width: 770pt; top: 550pt; height: 20pt;
+            }
+        }
+
+        .table {
+            width: 100%;
+            max-width: 100%;
+            margin-bottom: 5px;
+            background-color: #fff;
+        }
+        .table th,
+        .table td {
+            padding: 5px;
+            vertical-align: top;
+            border-top: 1px solid #000;
+        }
+        .table thead th {
+            vertical-align: bottom;
+            border-bottom: 2px solid #000;
+        }
+        .table tbody + tbody {
+            border-top: 2px solid #000;
+        }
+        .table .table {
+            background-color: #fff;
+        }
+
+
+    </style>
+</head>
+<body>
+
+    <div id="header_content">
+        <h1>CONTROLE DE ESTOQUE - Relatório de movimentação do estoque</h1>
+    </div>
+
+    <div id="footer_content">
+        <p style="text-align: center">Página <pdf:pagenumber> de <pdf:pagecount> </p>
+    </div>
+
+    <div id="content_frame">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="text-align: 'left';">DATA</th>
+                    <th style="text-align: 'left';">MOV.</th>
+                    <th style="text-align: 'left';">PRODUTO</th>
+                    <th style="text-align: 'right';">QTDE</th>
+                    <th style="text-align: 'right';">ESTOQUE</th>
+                    <th style="text-align: 'right';">STATUS</th>
+                    <th style="text-align: 'right';">USUÁRIO</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for movimento in movimentos %}
+                    <tr>
+                        <td style="text-align: 'left'; width: 8%">{{ movimento.data | date:"d/m/Y" }}</td>
+                        <td style="text-align: 'left'; width: 8%">
+
+                        {% if movimento.tipo_movimento == 'entrada' %}
+                            <span style="color:green">{{ movimento.tipo_movimento | upper }}</span>
+
+                        {% else %}
+                            <span style="color:red">{{ movimento.tipo_movimento | upper }}</span>
+
+                        {% endif %}
+
+                        </td>
+                        <td style="text-align: 'left'; width: 46%">{{ movimento.produto.codigo }} - {{ movimento.produto.descricao }}</td>
+                        <td style="text-align: 'right'; width: 8%">{{ movimento.quantidade }}</td>
+                        <td style="text-align: 'right'; width: 8%">{{ movimento.saldo_anterior }}</td>
+                        <td style="text-align: 'right'; width: 10%">
+
+                            {% if movimento.saldo < movimento.produto.minimo and movimento.saldo > 0 %}
+                                <span>Baixo</span>
+
+                            {% elif movimento.saldo >= movimento.produto.minimo %}
+                               <span>Normal</span>
+
+                            {% else %}
+                                <span>Sem estoque</span>
+
+                            {% endif %}
+                        </td>
+                        <td style="text-align: 'right'; width: 10%">{{movimento.usuario.username }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <br/>
+        <div>
+            <h3> Parâmetros da pesquisa realizada em {{ hoje | date:"d/m/Y" }} </h3>
+            <ul>
+                <li>
+                    <span><b>Produto: </b>{{ produto }}</span>
+                </li>
+                <li>
+                    <span><b>Tipo movimento: </b>{{ tipo_movimento }}</span> <br/>
+                </li>
+                <li>
+                    <span><b>Período: </b>{{ data_inicio }} até {{ data_fim }}</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</body>
+</html>

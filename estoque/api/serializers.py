@@ -4,7 +4,6 @@ from estoque.models import (CategoriaProduto, MovimentoEstoque, Produto,
                             SubCategoriaProduto, Medida, Local)
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
-from rest_framework.serializers import ReadOnlyField
 
 
 class CategoriaProdutoSerializer(serializers.ModelSerializer):
