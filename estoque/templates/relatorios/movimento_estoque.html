@@ -85,7 +85,10 @@
                         </td>
                         <td style="text-align: 'left'; width: 46%">{{ movimento.produto.codigo }} - {{ movimento.produto.descricao }}</td>
                         <td style="text-align: 'right'; width: 8%">{{ movimento.quantidade }}</td>
-                        <td style="text-align: 'right'; width: 8%">{{ movimento.saldo_anterior }}</td>
+                        <td style="text-align: 'right'; width: 8%">
+                            {{ movimento.saldo }}
+                        </td>
+
                         <td style="text-align: 'right'; width: 10%">
 
                             {% if movimento.saldo < movimento.produto.minimo and movimento.saldo > 0 %}
