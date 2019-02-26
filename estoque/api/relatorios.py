@@ -99,7 +99,7 @@ class RelatorioMovimentoEstoque(View):
       if data_fim:
          movimentos = movimentos.filter(data__lte=data_fim)
 
-      movimentos = movimentos.order_by('-data')
+      movimentos = movimentos.order_by('data')
 
       hoje = timezone.now()
 
