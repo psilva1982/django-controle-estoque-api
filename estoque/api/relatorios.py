@@ -94,7 +94,7 @@ class RelatorioMovimentoEstoque(View):
          movimentos = movimentos.filter(tipo_movimento=tipo_movimento)
 
       if data_inicio:
-         movimentos = movimentos.filter(data__gte=date_inicio)
+         movimentos = movimentos.filter(data__gte=data_inicio)
 
       if data_fim:
          movimentos = movimentos.filter(data__lte=data_fim)
